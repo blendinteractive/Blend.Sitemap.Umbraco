@@ -80,9 +80,9 @@ namespace Our.Umbraco.Blend.Sitemap
             if (documentType is not null)
             {
                 var pages = _contentCache.GetByContentType(documentType);
-                if (!_config.FieldChecker.IsNullOrWhiteSpace())
+                if (!_config.ExcludeBoolFieldAlias.IsNullOrWhiteSpace())
                 {
-                    pages = pages.Where(x => !x.Value<bool>(_config.FieldChecker));
+                    pages = pages.Where(x => !x.Value<bool>(_config.ExcludeBoolFieldAlias));
                 }
                 _sitemapPages.AddRange(pages.Select(x => LoadPage(x, type)));
             }

@@ -5,7 +5,7 @@ namespace Our.Umbraco.Blend.Sitemap
     {
         public const string Sitemap = "Sitemap";
 
-        public string FieldChecker { get; set; }
+        public string ExcludeBoolFieldAlias { get; set; }
 
         public string ChangeFrequency { get; set; }
 
