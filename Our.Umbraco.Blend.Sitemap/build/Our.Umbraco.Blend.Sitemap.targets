@@ -1,0 +1,9 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <Target Name="CopyBlendSitemapAssets" BeforeTargets="Build">
+    </Target>
+
+    <Target Name="ClearBlendSitemapAssets" BeforeTargets="Clean">
+    </Target>
+
+</Project>
