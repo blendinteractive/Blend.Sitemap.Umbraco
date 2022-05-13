@@ -1,9 +1,10 @@
-﻿
-namespace Our.Umbraco.Blend.Sitemap
+﻿namespace Our.Umbraco.Blend.Sitemap
 {
     public class SitemapOptions
     {
         public const string Sitemap = "Sitemap";
+
+        public int CacheMinutes { get; set; }
 
         public string ExcludeBoolFieldAlias { get; set; }
 

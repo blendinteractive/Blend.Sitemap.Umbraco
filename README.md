@@ -40,6 +40,7 @@ In the root of your `appSettings.json` you can configure custom settings. You ca
 ```
 "Sitemap": {
     "ExcludeBoolFieldAlias": "aliasBoolField",
+    "CacheMinutes": "15"
     "ChangeFrequency": "weekly",
     "Priority": "0.5",
     "DocumentTypes: [
@@ -59,6 +60,8 @@ In the root of your `appSettings.json` you can configure custom settings. You ca
 ```
 
 `Sitemap` is the root object and is required.
+
+`Sitemap.CacheMinutes` is an optional integer. When filled in the sitemap will be cached for that many minutes before rebuilding. If a document type with an alias is Published, Unpublished, Copied, Moved, Moved To Recycling Deleted, or Rolled Back the cache will be cleared and regenerated on next load. If left blank the default is 15 minutes.
 
 `Sitemap.ExcludeBoolFieldAlias` is an optional string. When filled in all documents to display will use this field to determine if that document should be excluded.
 

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Services;
@@ -20,18 +22,29 @@ namespace Our.Umbraco.Blend.Sitemap
         private readonly SitemapOptions _config;
         private readonly IContentTypeService _contentTypeService;
         private readonly IUmbracoContextFactory _factory;
+        private readonly IAppPolicyCache _runtimeCache;
         private IPublishedContentCache _contentCache;
         private List<SitemapPage> _sitemapPages;
+        private readonly TimeSpan _cacheDuration;
 
-        public SitemapBuilder(IOptions<SitemapOptions> config, IContentTypeService contentTypeService, IUmbracoContextFactory factory)
+        public SitemapBuilder(IOptions<SitemapOptions> config, IContentTypeService contentTypeService, IUmbracoContextFactory factory, AppCaches appCaches)
         {
             _config = config.Value;
             _contentTypeService = contentTypeService;
             _factory = factory;
+            _runtimeCache = appCaches.RuntimeCache;
             _sitemapPages = new List<SitemapPage>();
+            _cacheDuration = TimeSpan.FromMinutes(_config.CacheMinutes > 0 ? _config.CacheMinutes : 15);
         }
 
         public XElement GetSitemap()
+        {
+            return _runtimeCache.GetCacheItem("sitemap", () => {
+                return LoadSitemap();
+            }, _cacheDuration);
+        }
+
+        private XElement LoadSitemap()
         {
             var reference = _factory.EnsureUmbracoContext();
             _contentCache = reference.UmbracoContext.Content;
@@ -40,10 +53,10 @@ namespace Our.Umbraco.Blend.Sitemap
 
             if (_sitemapPages.Any())
             {
-                var items = _sitemapPages.Select(x => new XElement("url", 
+                var items = _sitemapPages.Select(x => new XElement("url",
                     new XElement("loc", x.Url),
                     new XElement("lastmod", x.UpdateDate),
-                    new XElement("changefreq",x.ChangeFrequency),
+                    new XElement("changefreq", x.ChangeFrequency),
                     new XElement("priority", x.Priority)
                 ));
                 return new XElement("urlset", items);

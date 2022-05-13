@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Core.Notifications;
 
 namespace Our.Umbraco.Blend.Sitemap
 {
@@ -10,6 +11,14 @@ namespace Our.Umbraco.Blend.Sitemap
         {
             builder.Services.AddOptions<SitemapOptions>().Bind(builder.Config.GetSection(SitemapOptions.Sitemap));
             builder.Services.AddTransient<ISitemapBuilder, SitemapBuilder>();
+            builder.AddNotificationHandler<ContentPublishedNotification, SitemapCacheClear>();
+            builder.AddNotificationHandler<ContentUnpublishedNotification, SitemapCacheClear>();
+            builder.AddNotificationHandler<ContentCopiedNotification, SitemapCacheClear>();
+            builder.AddNotificationHandler<ContentMovedNotification, SitemapCacheClear>();
+            builder.AddNotificationHandler<ContentMovedToRecycleBinNotification, SitemapCacheClear>();
+            builder.AddNotificationHandler<ContentDeletedNotification, SitemapCacheClear>();
+            builder.AddNotificationHandler<ContentRolledBackNotification, SitemapCacheClear>();
         }
     }
 }
+

@@ -1,5 +1,4 @@
-﻿
-namespace Our.Umbraco.Blend.Sitemap
+﻿namespace Our.Umbraco.Blend.Sitemap
 {
     public class SitemapPage
     {
