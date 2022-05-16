@@ -4,7 +4,7 @@ using Umbraco.Cms.Web.Common.Controllers;
 
 namespace Our.Umbraco.Blend.Sitemap
 {
-    public class SitemapController : UmbracoApiController
+    public class SitemapController : Controller
     {
         private readonly ISitemapBuilder _sitemapBuilder;
 
@@ -16,9 +16,10 @@ namespace Our.Umbraco.Blend.Sitemap
         [Route("sitemap.xml")]
         public IActionResult Sitemap()
         {
-            var doc = _sitemapBuilder.GetSitemap();
-            
-            return Content(doc.ToString(), "application/xml", Encoding.UTF8);
+
+            var model = _sitemapBuilder.GetSitemap();
+
+            return View("/App_Plugins/Our.Umbraco.Blend.Sitemap/Views/Sitemap.cshtml", model);
         }
     }
 }

@@ -1,0 +1,20 @@
+﻿@model Our.Umbraco.Blend.Sitemap.SitemapViewModel
+@{
+    Layout = null;
+    Context.Response.ContentType = "application/xml";
+}
+<?xml version="1.0" encoding="utf-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    @if (Model.Pages.Any())
+    {
+        foreach(var item in Model.Pages)
+        {
+    <url>
+        <loc>@item.Url</loc>
+        <lastmod>@item.UpdateDate</lastmod>
+        <changefreq>@item.ChangeFrequency</changefreq>
+        <priority>@item.Priority</priority>
+    </url>
+        }
+    }
+</urlset>

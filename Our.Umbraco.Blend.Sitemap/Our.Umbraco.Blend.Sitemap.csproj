@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <ContentTargetFolders>.</ContentTargetFolders>
@@ -8,7 +8,7 @@
         <Product>Sitemap.xml for Umbraco 9</Product>
         <PackageTags>umbraco plugin package sitemap blend</PackageTags>
         <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-        <Version>9.0.0</Version>
+        <Version>9.0.4</Version>
         <Authors>Chase Burandt</Authors>
         <Company>Blend Interactive</Company>
         <Copyright>Copyright (c) Blend Interactive</Copyright>
@@ -20,9 +20,13 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Content Include="App_Plugins\Our.Umbraco.Blend.Sitemap\**\*.*">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        </Content>
         <None Include="build\**\*.*">
             <Pack>true</Pack>
             <PackagePath>buildTransitive</PackagePath>
         </None>
     </ItemGroup>
-</Project>
+  </Project>

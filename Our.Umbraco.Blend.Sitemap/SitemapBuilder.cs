@@ -15,7 +15,7 @@ namespace Our.Umbraco.Blend.Sitemap
 {
     public interface ISitemapBuilder
     {
-        public XDocument GetSitemap();
+        public SitemapViewModel GetSitemap();
     }
 
     public class SitemapBuilder : ISitemapBuilder
@@ -38,39 +38,20 @@ namespace Our.Umbraco.Blend.Sitemap
             _cacheDuration = TimeSpan.FromMinutes(_config.CacheMinutes > 0 ? _config.CacheMinutes : 15);
         }
 
-        public XDocument GetSitemap()
+        public SitemapViewModel GetSitemap()
         {
-            return _runtimeCache.GetCacheItem("sitemap", () => {
-                var doc = new XDocument(
-                    new XDeclaration("1.0", "UTF-8", "no"),
-                    LoadSitemap()
-                );
-                return doc;
-            }, _cacheDuration);
-        }
-
-        private XElement LoadSitemap()
-        {
-            var reference = _factory.EnsureUmbracoContext();
-            _contentCache = reference.UmbracoContext.Content;
-
+            //return _runtimeCache.GetCacheItem("sitemap", () => {
             LoadPages();
+            var model = new SitemapViewModel(_sitemapPages);
 
-            if (_sitemapPages.Any())
-            {
-                var items = _sitemapPages.Select(x => new XElement("url",
-                    new XElement("loc", x.Url),
-                    new XElement("lastmod", x.UpdateDate),
-                    new XElement("changefreq", x.ChangeFrequency),
-                    new XElement("priority", x.Priority)
-                ));
-                return new XElement("urlset", items);
-            }
-            return new XElement("urlset");
+            return model;
+            //}, _cacheDuration);
         }
 
         private void LoadPages()
         {
+            var reference = _factory.EnsureUmbracoContext();
+            _contentCache = reference.UmbracoContext.Content;
             _sitemapPages.Clear();
             if (_config.DocumentTypes.IsCollectionEmpty())
             {
