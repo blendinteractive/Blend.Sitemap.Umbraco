@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Models.PublishedContent;
@@ -14,7 +15,7 @@ namespace Our.Umbraco.Blend.Sitemap
 {
     public interface ISitemapBuilder
     {
-        public XElement GetSitemap();
+        public XDocument GetSitemap();
     }
 
     public class SitemapBuilder : ISitemapBuilder
@@ -37,10 +38,14 @@ namespace Our.Umbraco.Blend.Sitemap
             _cacheDuration = TimeSpan.FromMinutes(_config.CacheMinutes > 0 ? _config.CacheMinutes : 15);
         }
 
-        public XElement GetSitemap()
+        public XDocument GetSitemap()
         {
             return _runtimeCache.GetCacheItem("sitemap", () => {
-                return LoadSitemap();
+                var doc = new XDocument(
+                    new XDeclaration("1.0", "UTF-8", "no"),
+                    LoadSitemap()
+                );
+                return doc;
             }, _cacheDuration);
         }
 

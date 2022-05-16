@@ -16,9 +16,9 @@ namespace Our.Umbraco.Blend.Sitemap
         [Route("sitemap.xml")]
         public IActionResult Sitemap()
         {
-            var pages = _sitemapBuilder.GetSitemap();
+            var doc = _sitemapBuilder.GetSitemap();
             
-            return Content(pages.ToString(), "application/xml", Encoding.UTF8);
+            return Content(doc.ToString(), "application/xml", Encoding.UTF8);
         }
     }
 }
