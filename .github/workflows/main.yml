@@ -1,0 +1,27 @@
+name: Update NuGet
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    name: Update NuGet 
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+      - name: Build Package
+        run:
+          dotnet build -c Release "./Our.Umbraco.Blend.Sitemap/Our.Umbraco.Blend.Sitemap.csproj"
+      - name: Package Release
+        run:
+          dotnet pack -c Release --no-build -o out "./Our.Umbraco.Blend.Sitemap/Our.Umbraco.Blend.Sitemap.csproj"
+      - name: Publish Nuget to Nuget.org
+        run: ls .\out\*.nupkg | foreach { dotnet nuget push $_ -s https://api.nuget.org/v3/index.json -k $env:NUGET_TOKEN }
+        env:
+          NUGET_TOKEN: ${{ secrets.NUGET_BLEND_SITEMAP_TOKEN }} 
