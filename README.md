@@ -73,8 +73,8 @@ In the root of your `appSettings.json` you can configure custom settings. You ca
 
 `Sitemap.DocumentTypes` is a required array of document type groups to be in the sitemap. Each group change frequency and priority will apply to that group's aliases.
 
-`DocumentType.Aliases` is a required array of strings. The aliases of the document type to be included in sitemap.
+`Sitemap.DocumentType.Aliases` is a required array of strings. The aliases of the document type to be included in sitemap.
 
-`DocumentType.ChangeFrequency` is an optional string. Options for this are `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, and `never`. If not filled in these document types will not have the property.
+`Sitemap.DocumentType.ChangeFrequency` is an optional string. Options for this are `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, and `never`. If not filled in these document types will not have the property.
 
-`DocumentType.Priority` is an optional string. Options for this are `0.1` thorugh `0.9` and `1.0`. If not filled in these document types will not have the property.
+`Sitemap.DocumentType.Priority` is an optional string. Options for this are `0.1` thorugh `0.9` and `1.0`. If not filled in these document types will not have the property.
