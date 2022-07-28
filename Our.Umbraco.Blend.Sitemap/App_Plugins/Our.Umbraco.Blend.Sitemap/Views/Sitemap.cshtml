@@ -7,7 +7,7 @@
     Context.Response.ContentType = "application/xml";
 }
 <?xml version="1.0" encoding="utf-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" @(Model.IncludePageImages ? Html.Raw("xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\"") : "")>
     @if (Model.Pages.Any())
     {
         foreach(var item in Model.Pages)
@@ -19,15 +19,22 @@
 @{
     void DisplayPage(SitemapPage item)
     {
-        <url>
-            <loc>@item.Url</loc>
-            <lastmod>@item.UpdateDate</lastmod>
+      <url>
+        <loc>@item.Url</loc>
+        <lastmod>@item.UpdateDate</lastmod>
+        @if (!item.ChangeFrequency.IsNullOrWhiteSpace())
+        {
             <changefreq>@item.ChangeFrequency</changefreq>
+        }
+        @if (!item.Priority.IsNullOrWhiteSpace())
+        {
             <priority>@item.Priority</priority>
-            @{
-                DisplayRelatedImages(item.ImageUrls);
-            }
-        </url>
+        }
+        @if (Model.IncludePageImages)
+        {
+            DisplayRelatedImages(item.ImageUrls);
+        }
+      </url>
     }
 
     void DisplayRelatedImages(List<string> urls)

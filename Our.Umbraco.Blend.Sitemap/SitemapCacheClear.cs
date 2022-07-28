@@ -30,7 +30,10 @@ namespace Our.Umbraco.Blend.Sitemap
             _documentTypeAliases = new List<string>();
             if (!_config.DocumentTypes.IsCollectionEmpty())
             {
-                _documentTypeAliases = _config.DocumentTypes.Select(x => x.Alias).ToList();
+                foreach (var docType in _config.DocumentTypes)
+                {
+                    _documentTypeAliases.AddRange(docType.Aliases);
+                }
             }
         }
 

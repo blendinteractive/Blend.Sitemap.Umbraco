@@ -46,7 +46,7 @@ namespace Our.Umbraco.Blend.Sitemap
         {
             //return _runtimeCache.GetCacheItem("sitemap", () => {
                 LoadPages();
-                return new SitemapViewModel(_sitemapPages);
+                return new SitemapViewModel(_sitemapPages, _config.IncludePageImages);
             //}, _cacheDuration);
         }
 
@@ -56,55 +56,44 @@ namespace Our.Umbraco.Blend.Sitemap
             _contentCache = reference.UmbracoContext.Content;
             _mediaCache = reference.UmbracoContext.Media;
             _sitemapPages.Clear();
-            if (_config.DocumentTypes.IsCollectionEmpty())
-            {
-                var documentTypes = _contentTypeService.GetAllContentTypeAliases();
-                if (documentTypes.Any())
+            if (!_config.DocumentTypes.IsCollectionEmpty()) {
+                foreach (var docType in _config.DocumentTypes)
                 {
-                    foreach (var type in documentTypes)
+                    foreach (var alias in docType.Aliases)
                     {
-                        LoadDocumentTypePages(type);
+                        var documentType = _contentCache.GetContentType(alias);
+                        if (documentType is not null)
+                        {
+                            var pages = _contentCache.GetByContentType(documentType);
+                            if (!_config.ExcludeBoolFieldAlias.IsNullOrWhiteSpace())
+                            {
+                                pages = pages.Where(x => !x.Value<bool>(_config.ExcludeBoolFieldAlias));
+                            }
+                            _sitemapPages.AddRange(pages.Select(x => LoadPage(x, docType)));
+                        }
                     }
-                };
-            }
-            else
-            {
-                foreach (var type in _config.DocumentTypes)
-                {
-                    LoadDocumentTypePages(type.Alias, type);
                 }
             }
         }
 
-        private void LoadDocumentTypePages(string contentTypeAlias, SitemapDocumentTypeOptions type = null)
-        {
-            var documentType = _contentCache.GetContentType(contentTypeAlias);
-            if (documentType is not null)
-            {
-                var pages = _contentCache.GetByContentType(documentType);
-                if (!_config.ExcludeBoolFieldAlias.IsNullOrWhiteSpace())
-                {
-                    pages = pages.Where(x => !x.Value<bool>(_config.ExcludeBoolFieldAlias));
-                }
-                _sitemapPages.AddRange(pages.Select(x => LoadPage(x, type)));
-            }
-        }
-
-        private SitemapPage LoadPage(IPublishedContent content, SitemapDocumentTypeOptions type = null)
+        private SitemapPage LoadPage(IPublishedContent content, SitemapDocumentTypeOptions type)
         {
             var page = GetPage(content, type);
-            var media = GetMediaRelations(content.Id);
-            foreach (var item in media)
+            if (_config.IncludePageImages || _config.IncludePageDocuments)
             {
-                if (item.HasProperty("umbracoExtension") && item.HasValue("umbracoExtension"))
+                var media = GetMediaRelations(content.Id);
+                foreach (var item in media)
                 {
-                    if (_imageAliases.Contains(item.ContentType.Alias))
+                    if (item.HasProperty("umbracoExtension") && item.HasValue("umbracoExtension"))
                     {
-                        page.ImageUrls.Add(item.Url(mode: UrlMode.Absolute));
-                    }
-                    else
-                    {
-                        _sitemapPages.Add(GetPage(item, type));
+                        if (_config.IncludePageImages && _imageAliases.Contains(item.ContentType.Alias))
+                        {
+                            page.ImageUrls.Add(item.Url(mode: UrlMode.Absolute));
+                        }
+                        else if (_config.IncludePageDocuments)
+                        {
+                            _sitemapPages.Add(GetPage(item, type));
+                        }
                     }
                 }
             }
@@ -112,20 +101,15 @@ namespace Our.Umbraco.Blend.Sitemap
             return page;
         }
 
-        private SitemapPage GetPage(IPublishedContent content, SitemapDocumentTypeOptions type = null)
+        private SitemapPage GetPage(IPublishedContent content, SitemapDocumentTypeOptions type)
         {
             var page = new SitemapPage()
             {
                 Url = content.Url(mode: UrlMode.Absolute),
                 UpdateDate = string.Format("{0:s}+00:00", content.UpdateDate),
-                Priority = _config.Priority,
-                ChangeFrequency = _config.ChangeFrequency
+                ChangeFrequency = type.ChangeFrequency,
+                Priority = type.Priority
             };
-            if (type is not null)
-            {
-                page.Priority = type.Priority ?? _config.Priority;
-                page.ChangeFrequency = type.ChangeFrequency ?? _config.ChangeFrequency;
-            }
             return page;
         }
 

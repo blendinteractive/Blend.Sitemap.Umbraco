@@ -8,16 +8,16 @@
 
         public string ExcludeBoolFieldAlias { get; set; }
 
-        public string ChangeFrequency { get; set; }
+        public bool IncludePageImages { get; set; }
 
-        public string Priority { get; set; }
+        public bool IncludePageDocuments { get; set; }
 
         public SitemapDocumentTypeOptions[] DocumentTypes { get; set; }
     }
 
     public class SitemapDocumentTypeOptions
     {
-        public string Alias { get; set; }
+        public string[] Aliases { get; set; }
 
         public string ChangeFrequency { get; set; }
 
