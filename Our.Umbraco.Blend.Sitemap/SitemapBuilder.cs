@@ -44,10 +44,10 @@ namespace Our.Umbraco.Blend.Sitemap
 
         public SitemapViewModel GetSitemap()
         {
-            //return _runtimeCache.GetCacheItem("sitemap", () => {
+            return _runtimeCache.GetCacheItem("sitemap", () => {
                 LoadPages();
                 return new SitemapViewModel(_sitemapPages, _config.IncludePageImages);
-            //}, _cacheDuration);
+            }, _cacheDuration);
         }
 
         private void LoadPages()
