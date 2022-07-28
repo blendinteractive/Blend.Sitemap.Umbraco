@@ -30,8 +30,6 @@ This will use the route `/sitemap.xml` declared in the controller.
 
 ## Default
 ---
-If there are not any configurations in the the `appSettings.json` file this package will load all document types.
-
 If there are no settings for the sitemap in the `appSettings.json` file nothing will be dispalyed.
 
 ## Configuration
@@ -40,21 +38,25 @@ In the root of your `appSettings.json` you can configure custom settings. You ca
 ```
 "Sitemap": {
     "ExcludeBoolFieldAlias": "aliasBoolField",
-    "CacheMinutes": "15"
-    "ChangeFrequency": "weekly",
-    "Priority": "0.5",
+    "CacheMinutes": "15",
+    "IncludePageImages": false,
+    "IncludePageDocuments": false,
     "DocumentTypes: [
         {
-            "Alias": "homePage",
+            "Aliases": [ "homePage" ],
             "ChangeFrequency": "daily"
             "Priority": "1.0"
         },
         {
-            "Alias": "standardPage"
+            "Aliases": [ "newsList", "eventsList", "landingPage" ],
+            "ChangeFrequency": "weekly"
+            "Priority": "0.9"
         },
         {
-            "Alias": "search"
-        }
+            "Aliases": [ "standardPage", "news", "event" ],
+            "ChangeFrequency": "monthly"
+            "Priority": "0.5"
+        },
     ]
 }
 ```
@@ -65,14 +67,14 @@ In the root of your `appSettings.json` you can configure custom settings. You ca
 
 `Sitemap.ExcludeBoolFieldAlias` is an optional string. When filled in all documents to display will use this field to determine if that document should be excluded.
 
-`Sitemap.ChangeFrequency` is a required string. Options for this are `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, and `never`.
+`Sitemap.IncludePageImage` is an optional boolean default false. When true will add image:image > image:loc into each page that are referenced on the page. `Image` amd `umbracoMediaVectorGraphics` are classified as image types.
 
-`Sitemap.Priority` is a required string. Options for this are `0.1` thorugh `0.9` and `1.0`.
+`Sitemap.IncludePageDocuments` is an optional boolean default false. When true will add document that isn't an image type as a url with the same changeFrequency and priority as the document it was referenced on.
 
-`Sitemap.DocumentTypes` is an optional array of document types to be in the sitemap.
+`Sitemap.DocumentTypes` is a required array of document type groups to be in the sitemap. Each group change frequency and priority will apply to that group's aliases.
 
-`DocumentType.Alias` is a required string. The alias of the document type to be included in sitemap.
+`DocumentType.Aliases` is a required array of strings. The aliases of the document type to be included in sitemap.
 
-`DocumentType.ChangeFrequency` is an optional string. If not filled in will use the `Sitemap.ChangeFrequency` with the same options available.
+`DocumentType.ChangeFrequency` is an optional string. Options for this are `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, and `never`. If not filled in these document types will not have the property.
 
-`DocumentType.Priority` is an optional string. If not filled in will use the `Sitemap.Priority` with the same options available.
+`DocumentType.Priority` is an optional string. Options for this are `0.1` thorugh `0.9` and `1.0`. If not filled in these document types will not have the property.
