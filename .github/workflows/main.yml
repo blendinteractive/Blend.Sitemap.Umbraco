@@ -34,20 +34,27 @@ jobs:
         with:
           nuget-version: latest
 
-      - name: Install gitversion
-        uses: gittools/actions/gitversion/setup@v0.9.7
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+
+      - uses: actions-ecosystem/action-bump-semver@v1
+        id: bump-semver
         with:
-          versionSpec: '5.x'
-      
-      - name: Use GitVersion
-        id: gitversion # step id used as reference for output values
-        uses: gittools/actions/gitversion/execute@v0.9.11
+          current_version: ${{ steps.get-latest-tag.outputs.tag }}
+          level: patch
       
       - name: Install dependencies
         run: dotnet restore
 
       - name: Build Blend.Sitemap
-        run: dotnet pack .\Our.Umbraco.Blend.Sitemap\Our.Umbraco.Blend.Sitemap.csproj --no-restore -c ${{ env.BUILD_CONFIG }} -o ${{ env.OUT_FOLDER }}  /p:ContinuousIntegrationBuild=true,version=${{ env.GitVersion_NuGetVersionV2 }}
+        run: dotnet pack .\Our.Umbraco.Blend.Sitemap\Our.Umbraco.Blend.Sitemap.csproj --no-restore -c ${{ env.BUILD_CONFIG }} -o ${{ env.OUT_FOLDER }}  /p:ContinuousIntegrationBuild=true,version=${{ steps.bump-semver.outputs.new_version }}
 
       - name: Publish Nuget to Nuget.org
         run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey $env:NUGET_TOKEN
+
+      
+
+      - uses: actions-ecosystem/action-push-tag@v1
+        with:
+          tag: ${{ steps.bump-semver.outputs.new_version }}
+          message: '${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
