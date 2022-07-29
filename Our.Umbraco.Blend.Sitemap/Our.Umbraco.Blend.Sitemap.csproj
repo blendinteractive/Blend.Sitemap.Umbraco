@@ -23,6 +23,7 @@
 
     <ItemGroup>
         <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.0.0" />
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
