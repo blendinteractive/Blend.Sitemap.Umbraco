@@ -10,6 +10,7 @@
         <Authors>Chase Burandt</Authors>
         <Company>Blend Interactive</Company>
         <Copyright>Copyright (c) Blend Interactive</Copyright>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <PropertyGroup>
