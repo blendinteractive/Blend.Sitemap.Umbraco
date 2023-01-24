@@ -1,39 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ContentTargetFolders>.</ContentTargetFolders>
-        <Title>Our.Umbraco.Blend.Sitemap</Title>
-        <Description>Dynamic route for /sitemap.xml</Description>
-        <Product>Sitemap.xml for Umbraco 9</Product>
-        <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-        <Version>9.0.2</Version>
-        <Authors>Chase Burandt</Authors>
-        <Company>Blend Interactive</Company>
-        <Copyright>Copyright (c) Blend Interactive</Copyright>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
+    <Title>Our.Umbraco.Blend.Sitemap</Title>
+    <Description>Dynamic route for /sitemap.xml</Description>
+    <Product>Sitemap.xml for Umbraco 9</Product>
+    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <Version>11.0.0</Version>
+    <Authors>Chase Burandt</Authors>
+    <Company>Blend Interactive</Company>
+    <Copyright>Copyright (c) Blend Interactive</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
 
-    <PropertyGroup>
-        <PackageId>Our.Umbraco.Blend.Sitemap</PackageId>
-        <PackageTags>umbraco plugin package sitemap blend</PackageTags>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/blendinteractive/Blend.Sitemap.Umbraco</RepositoryUrl>
-    </PropertyGroup>
+  <PropertyGroup>
+    <PackageId>Our.Umbraco.Blend.Sitemap</PackageId>
+    <PackageTags>umbraco plugin package sitemap blend</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/blendinteractive/Blend.Sitemap.Umbraco</RepositoryUrl>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0" />
-        <None Include="..\README.md" Pack="true" PackagePath="\"/>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0" />
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
-    <ItemGroup>
-        <Content Include="App_Plugins\Our.Umbraco.Blend.Sitemap\**\*.*">
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-        </Content>
-        <None Include="build\**\*.*">
-            <Pack>true</Pack>
-            <PackagePath>buildTransitive</PackagePath>
-        </None>
-    </ItemGroup>
-  </Project>
+  <ItemGroup>
+    <Content Include="App_Plugins\Our.Umbraco.Blend.Sitemap\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <None Include="build\**\*.*">
+      <Pack>true</Pack>
+      <PackagePath>buildTransitive</PackagePath>
+    </None>
+  </ItemGroup>
+</Project>
