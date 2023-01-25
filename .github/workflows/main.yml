@@ -12,7 +12,7 @@ jobs:
       OUT_FOLDER: './out'
       NUGET_TOKEN: ${{ secrets.NUGET_BLEND_SITEMAP_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      
     runs-on: windows-latest
     strategy:
       matrix: 

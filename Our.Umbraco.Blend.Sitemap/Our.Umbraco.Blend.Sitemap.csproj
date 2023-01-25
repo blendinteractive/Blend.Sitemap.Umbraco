@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Web.Website" Version="11.0.0" />
-    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +31,7 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
     </Content>
+    <Content Include="appsettings-schema.sitemap.json" PackagePath=""/>
     <None Include="build\**\*.*">
       <Pack>true</Pack>
       <PackagePath>buildTransitive</PackagePath>
