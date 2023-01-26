@@ -2,14 +2,14 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ContentTargetFolders>.</ContentTargetFolders>
-    <Title>Blend.Sitemap</Title>
+    <Title>Blend Sitemap</Title>
     <Description>Dynamic route for /sitemap.xml</Description>
-    <Product>Sitemap.xml for Umbraco 9</Product>
+    <Product>Sitemap.xml for Umbraco 11</Product>
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-    <Version>11.1.2</Version>
+    <Version>11.0.0</Version>
     <Authors>Chase Burandt</Authors>
     <Company>Blend Interactive</Company>
-    <Copyright>Copyright (c) Blend Interactive</Copyright>
+    <Copyright>Copyright (c) 2023 Blend Interactive</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 

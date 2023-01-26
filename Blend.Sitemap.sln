@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\main.yml = .github\workflows\main.yml
 		README.md = README.md
+		umbraco-marketplace.json = umbraco-marketplace.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{375D391F-E20E-4FD1-BD9C-E2BAC51540B3}"
