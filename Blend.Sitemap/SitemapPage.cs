@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Our.Umbraco.Blend.Sitemap
+namespace Blend.Sitemap
 {
     public class SitemapPage
     {
@@ -9,13 +9,13 @@ namespace Our.Umbraco.Blend.Sitemap
             ImageUrls = new List<string>();
         }
 
-        public string Priority { get; set; }
+        public Priority Priority { get; set; }
 
         public string Url { get; set; }
 
         public string UpdateDate { get; set; }
 
-        public string ChangeFrequency { get; set; }
+        public ChangeFrequency ChangeFrequency { get; set; }
 
         public List<string> ImageUrls { get; set; }
     }

@@ -7,7 +7,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Extensions;
 
-namespace Our.Umbraco.Blend.Sitemap
+namespace Blend.Sitemap
 {
     public class SitemapCacheClear :
         INotificationHandler<ContentPublishedNotification>,

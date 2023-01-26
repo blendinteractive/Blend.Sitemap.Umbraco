@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Our.Umbraco.Blend.Sitemap
+namespace Blend.Sitemap
 { 
 
     public class SitemapViewModel

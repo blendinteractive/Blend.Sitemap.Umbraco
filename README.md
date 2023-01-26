@@ -67,7 +67,7 @@ In the root of your `appSettings.json` you can configure custom settings. You ca
 
 `Sitemap.ExcludeBoolFieldAlias` is an optional string. When filled in all documents to display will use this field to determine if that document should be excluded.
 
-`Sitemap.IncludePageImage` is an optional boolean default false. When true will add image:image > image:loc into each page that are referenced on the page. `Image` amd `umbracoMediaVectorGraphics` are classified as image types.
+`Sitemap.IncludePageImage` is an optional boolean default false. When true will add image:image > image:loc into each page that are referenced on the page. `Image` and `umbracoMediaVectorGraphics` are classified as image types.
 
 `Sitemap.IncludePageDocuments` is an optional boolean default false. When true will add document that isn't an image type as a url with the same changeFrequency and priority as the document it was referenced on.
 

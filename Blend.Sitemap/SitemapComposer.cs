@@ -3,13 +3,13 @@ using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
 
-namespace Our.Umbraco.Blend.Sitemap
+namespace Blend.Sitemap
 {
     public class SitemapComposer : IComposer
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            builder.Services.AddOptions<SitemapOptions>().Bind(builder.Config.GetSection(SitemapOptions.Sitemap));
+            builder.Services.AddOptions<SitemapOptions>().Bind(builder.Config.GetSection(SitemapConstants.Sitemap));
             builder.Services.AddTransient<ISitemapBuilder, SitemapBuilder>();
             builder.AddNotificationHandler<ContentPublishedNotification, SitemapCacheClear>();
             builder.AddNotificationHandler<ContentUnpublishedNotification, SitemapCacheClear>();

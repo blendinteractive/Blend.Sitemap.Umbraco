@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NJsonSchema" Version="10.8.0" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blend.Sitemap\Blend.Sitemap.csproj" />
+  </ItemGroup>
+  
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<DocumentationFile>bin\Release\$(TargetFramework)\SchemaGenerator.xml</DocumentationFile>
+	</PropertyGroup>
+
+  <Target Name="CopyPackagesXml" BeforeTargets="Build">
+    <ItemGroup>
+      <PackageReferenceFiles Include="$(NugetPackageRoot)%(PackageReference.Identity)\%(PackageReference.Version)%(PackageReference.CopyToOutputDirectory)\lib\**\*.xml" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PackageReferenceFiles)" DestinationFolder="$(OutDir)" />
+  </Target>
+
+  <Target Name="BuildSchema" AfterTargets="PostBuildEvent">
+    <Exec Command=".\bin\Release\net7.0\SchemaGenerator.exe" />
+  </Target>
+</Project>

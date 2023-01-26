@@ -9,7 +9,7 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
 
-namespace Our.Umbraco.Blend.Sitemap
+namespace Blend.Sitemap
 {
     public interface ISitemapBuilder
     {

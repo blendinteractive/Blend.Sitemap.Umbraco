@@ -2,7 +2,7 @@
 using System.Text;
 using Umbraco.Cms.Web.Common.Controllers;
 
-namespace Our.Umbraco.Blend.Sitemap
+namespace Blend.Sitemap
 {
     public class SitemapController : Controller
     {
@@ -19,7 +19,7 @@ namespace Our.Umbraco.Blend.Sitemap
 
             var model = _sitemapBuilder.GetSitemap();
 
-            return View("/App_Plugins/Our.Umbraco.Blend.Sitemap/Views/Sitemap.cshtml", model);
+            return View("/App_Plugins/Blend.Sitemap/Views/Sitemap.cshtml", model);
         }
     }
 }
