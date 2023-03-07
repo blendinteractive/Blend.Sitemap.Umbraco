@@ -16,6 +16,7 @@
   <PropertyGroup>
     <PackageId>Our.Umbraco.Blend.Sitemap</PackageId>
     <PackageTags>umbraco plugin package sitemap blend umbraco-marketplace</PackageTags>
+    <PackageProjectUrl>https://github.com/blendinteractive/Blend.Sitemap.Umbraco</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/blendinteractive/Blend.Sitemap.Umbraco</RepositoryUrl>
