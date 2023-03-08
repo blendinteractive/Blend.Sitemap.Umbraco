@@ -1,15 +1,18 @@
 {
-  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "Title": "Blend Sitemap",
+  "AlternatePackageNames": [ "Blend Interactive Sitemap" ],
   "AuthorDetails": {
     "Name": "Chase Burandt",
+    "Description": "Senior Developer and Umbraco Certified Master @ Blend Interactive.",
     "Url": "https://www.blendinteractive.com/about/team/chase-burandt/",
     "ImageUrl": "https://www.blendinteractive.com/globalassets/images---bios/chase-bio-2022.jpg"
   },
   "Category": "Developer Tools",
   "Description": "sitemap.xml dynmically generated using the AppSettings and can be configured per environment.",
+  "DocumentationUrl": "https://github.com/blendinteractive/Blend.Sitemap.Umbraco/blob/main/README.md",
   "IssueTrackerUrl": "https://github.com/blendinteractive/Blend.Sitemap.Umbraco/issues",
   "LicenseTypes": [ "Free" ],
   "PackageType": "Package",
-  "Tags": [ "siemap", "sitemap.xml", "blend", "blend", "blend-interactive" ],
-  "Title": "Blend Sitemap"
+  "PackagesByAuthor": [ "Our.Umbraco.Blend.RobotsTxt" ],
+  "Tags": [ "siemap", "sitemap.xml", "blend", "blend", "blend-interactive" ]
 }
