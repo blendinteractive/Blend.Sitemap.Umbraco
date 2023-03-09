@@ -56,7 +56,7 @@ namespace Blend.Sitemap
             _contentCache = reference.UmbracoContext.Content;
             _mediaCache = reference.UmbracoContext.Media;
             _sitemapPages.Clear();
-            if (!_config.DocumentTypes.IsCollectionEmpty()) {
+            if (_config.DocumentTypes is not null && _config.DocumentTypes.Any()) {
                 foreach (var docType in _config.DocumentTypes)
                 {
                     foreach (var alias in docType.Aliases)
@@ -103,12 +103,17 @@ namespace Blend.Sitemap
 
         private SitemapPage GetPage(IPublishedContent content, SitemapDocumentTypeOptions type)
         {
+            var priority = "1.0";
+            if (type.Priority < 10)
+            {
+                priority = $"0.{type.Priority}";
+            }
             var page = new SitemapPage()
             {
                 Url = content.Url(mode: UrlMode.Absolute),
                 UpdateDate = string.Format("{0:s}+00:00", content.UpdateDate),
                 ChangeFrequency = type.ChangeFrequency,
-                Priority = type.Priority
+                Priority = priority
             };
             return page;
         }

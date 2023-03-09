@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 
@@ -43,9 +44,8 @@ namespace Blend.Sitemap
         /// <summary>
         /// Array of specific docuemnt types for loading into the sitemap
         /// </summary>
-        [DefaultValue(null)]
         [Description("Array of specific docuemnt types for loading into the sitemap")]
-        public SitemapDocumentTypeOptions[] DocumentTypes { get; set; } = Array.Empty<SitemapDocumentTypeOptions>();
+        public List<SitemapDocumentTypeOptions> DocumentTypes { get; set; } = new List<SitemapDocumentTypeOptions>();
     }
 
     /// <summary>
@@ -71,9 +71,9 @@ namespace Blend.Sitemap
         /// <summary>
         /// What is the priority of these document types
         /// </summary>
-        [DefaultValue(Priority.Five)]
+        [DefaultValue(5)]
         [Description("What is the priority of these document types")]
-        public Priority Priority { get; set; }
+        public int Priority { get; set; }
     }
 
     /// <summary>
@@ -89,34 +89,5 @@ namespace Blend.Sitemap
         monthly,
         yearly,
         never
-    }
-
-    /// <summary>
-    /// Options for Priority
-    /// </summary>
-    [Description("Options for Priority")]
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum Priority
-    {
-        [EnumMember(Value = "0.1")]
-        One,
-        [EnumMember(Value = "0.2")]
-        Two,
-        [EnumMember(Value = "0.3")]
-        Three,
-        [EnumMember(Value = "0.4")]
-        Four,
-        [EnumMember(Value = "0.5")]
-        Five,
-        [EnumMember(Value = "0.6")]
-        Six,
-        [EnumMember(Value = "0.7")]
-        Seven,
-        [EnumMember(Value = "0.8")]
-        Eight,
-        [EnumMember(Value = "0.9")]
-        Nine,
-        [EnumMember(Value = "1.0")]
-        Ten
     }
 }

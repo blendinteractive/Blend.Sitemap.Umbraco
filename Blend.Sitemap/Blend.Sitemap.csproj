@@ -6,7 +6,7 @@
     <Description>Dynamic route for /sitemap.xml</Description>
     <Product>Sitemap.xml for Umbraco 11</Product>
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-    <Version>11.1.0</Version>
+    <Version>11.1.120</Version>
     <Authors>Chase Burandt</Authors>
     <Company>Blend Interactive</Company>
     <Copyright>Copyright (c) 2023 Blend Interactive</Copyright>
@@ -29,11 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="App_Plugins\Blend.Sitemap\**\*.*">
+    <Content Include="Assets\Views\*.*">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
     </Content>
-    <Content Include="appsettings-schema.Blend.Sitemap.json" PackagePath=""/>
+    <Content Include="appsettings-schema.Blend.Sitemap.json" PackagePath="" />
     <None Include="build\**\*.*">
       <Pack>true</Pack>
       <PackagePath>buildTransitive</PackagePath>

@@ -9,7 +9,7 @@ namespace Blend.Sitemap
             ImageUrls = new List<string>();
         }
 
-        public Priority Priority { get; set; }
+        public string Priority { get; set; }
 
         public string Url { get; set; }
 

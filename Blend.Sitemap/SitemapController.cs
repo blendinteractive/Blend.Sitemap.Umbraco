@@ -19,7 +19,7 @@ namespace Blend.Sitemap
 
             var model = _sitemapBuilder.GetSitemap();
 
-            return View("/App_Plugins/Blend.Sitemap/Views/Sitemap.cshtml", model);
+            return View(model);
         }
     }
 }
