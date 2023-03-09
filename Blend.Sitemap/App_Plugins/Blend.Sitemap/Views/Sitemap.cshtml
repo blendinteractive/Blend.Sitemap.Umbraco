@@ -22,14 +22,8 @@
       <url>
         <loc>@item.Url</loc>
         <lastmod>@item.UpdateDate</lastmod>
-        @if (!item.ChangeFrequency.IsNullOrWhiteSpace())
-        {
-            <changefreq>@item.ChangeFrequency</changefreq>
-        }
-        @if (!item.Priority.IsNullOrWhiteSpace())
-        {
-            <priority>@item.Priority</priority>
-        }
+        <changefreq>@item.ChangeFrequency</changefreq>
+        <priority>@item.Priority</priority>
         @if (Model.IncludePageImages)
         {
             DisplayRelatedImages(item.ImageUrls);
