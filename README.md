@@ -38,24 +38,24 @@ In the root of your `appSettings.json` you can configure custom settings. You ca
 ```
 "Sitemap": {
     "ExcludeBoolFieldAlias": "aliasBoolField",
-    "CacheMinutes": "15",
+    "CacheMinutes": 15,
     "IncludePageImages": false,
     "IncludePageDocuments": false,
-    "DocumentTypes: [
+    "DocumentTypes": [
         {
             "Aliases": [ "homePage" ],
             "ChangeFrequency": "daily"
-            "Priority": "1.0"
+            "Priority": 10
         },
         {
             "Aliases": [ "newsList", "eventsList", "landingPage" ],
             "ChangeFrequency": "weekly"
-            "Priority": "0.9"
+            "Priority": 9
         },
         {
             "Aliases": [ "standardPage", "news", "event" ],
             "ChangeFrequency": "monthly"
-            "Priority": "0.5"
+            "Priority": 5
         },
     ]
 }
