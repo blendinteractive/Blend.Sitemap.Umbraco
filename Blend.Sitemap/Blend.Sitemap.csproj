@@ -6,7 +6,7 @@
     <Description>Dynamic route for /sitemap.xml</Description>
     <Product>Sitemap.xml for Umbraco 11</Product>
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-    <Version>11.1.120</Version>
+    <Version>11.1.0</Version>
     <Authors>Chase Burandt</Authors>
     <Company>Blend Interactive</Company>
     <Copyright>Copyright (c) 2023 Blend Interactive</Copyright>
@@ -15,7 +15,7 @@
 
   <PropertyGroup>
     <PackageId>Our.Umbraco.Blend.Sitemap</PackageId>
-    <PackageTags>umbraco plugin package sitemap blend umbraco-marketplace</PackageTags>
+    <PackageTags>umbraco sitemap blend umbraco-marketplace</PackageTags>
     <PackageProjectUrl>https://github.com/blendinteractive/Blend.Sitemap.Umbraco</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
@@ -35,7 +35,7 @@
     </Content>
     <Content Include="appsettings-schema.Blend.Sitemap.json" PackagePath="" />
     <None Include="build\**\*.*">
-      <Pack>true</Pack>
+      <Pack>True</Pack>
       <PackagePath>buildTransitive</PackagePath>
     </None>
     <None Include="..\blend-sitemap-icon.png">
