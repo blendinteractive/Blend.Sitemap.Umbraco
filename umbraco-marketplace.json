@@ -1,4 +1,5 @@
 {
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
   "Title": "Blend Sitemap",
   "AlternatePackageNames": [ "Blend Interactive Sitemap" ],
   "AuthorDetails": {
@@ -14,5 +15,5 @@
   "LicenseTypes": [ "Free" ],
   "PackageType": "Package",
   "PackagesByAuthor": [ "Our.Umbraco.Blend.RobotsTxt" ],
-  "Tags": [ "siemap", "sitemap.xml", "blend", "blend-interactive" ]
+  "Tags": [ "sitemap", "sitemap.xml", "blend", "blend-interactive" ]
 }

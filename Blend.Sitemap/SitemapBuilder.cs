@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Services;
@@ -18,58 +19,71 @@ namespace Blend.Sitemap
 
     public class SitemapBuilder : ISitemapBuilder
     {
-        private readonly SitemapOptions _config;
-        private readonly IContentTypeService _contentTypeService;
-        private readonly IUmbracoContextFactory _factory;
-        private readonly IAppPolicyCache _runtimeCache;
-        private readonly IRelationService _relationService;
-        private IPublishedContentCache _contentCache;
-        private IPublishedMediaCache _mediaCache;
-        private List<SitemapPage> _sitemapPages;
-        private readonly TimeSpan _cacheDuration;
-        private readonly string[] _imageAliases = { "Image", "umbracoMediaVectorGraphics" };
+        private readonly SitemapOptions config;
+        private readonly IUmbracoContextFactory factory;
+        private readonly IRelationService relationService;
+        private readonly ILocalizationService localization;
+        private readonly IAppPolicyCache runtimeCache;
+        private readonly TimeSpan cacheDuration;
 
+        private IPublishedContentCache contentCache;
+        private IPublishedMediaCache mediaCache;
+        private List<SitemapPage> sitemapPages;
+        private ILanguage defaultLocal;
+        private List<ILanguage> languages;
+
+        private readonly string[] _imageAliases = { "Image", "umbracoMediaVectorGraphics" };
         private const string MediaRelationAlias = "umbMedia";
 
-        public SitemapBuilder(IOptions<SitemapOptions> config, IContentTypeService contentTypeService, IUmbracoContextFactory factory, IRelationService relationService, AppCaches appCaches)
+        public SitemapBuilder(IOptions<SitemapOptions> options, IUmbracoContextFactory factory, IRelationService relationService, ILocalizationService localization, AppCaches appCaches)
         {
-            _config = config.Value;
-            _contentTypeService = contentTypeService;
-            _factory = factory;
-            _relationService = relationService;
-            _runtimeCache = appCaches.RuntimeCache;
-            _sitemapPages = new List<SitemapPage>();
-            _cacheDuration = TimeSpan.FromMinutes(_config.CacheMinutes > 0 ? _config.CacheMinutes : 15);
+            config = options.Value;
+            this.factory = factory;
+            this.relationService = relationService;
+            this.localization = localization;
+            runtimeCache = appCaches.RuntimeCache;
+            sitemapPages = new List<SitemapPage>();
+            languages = new List<ILanguage>();
+            cacheDuration = TimeSpan.FromMinutes(config.CacheMinutes > 0 ? config.CacheMinutes : 15);
         }
 
         public SitemapViewModel GetSitemap()
         {
-            return _runtimeCache.GetCacheItem("sitemap", () => {
+            return runtimeCache.GetCacheItem("sitemap", () =>
+            {
                 LoadPages();
-                return new SitemapViewModel(_sitemapPages, _config.IncludePageImages);
-            }, _cacheDuration);
+                return new SitemapViewModel(sitemapPages, config.IncludePageImages);
+            }, cacheDuration);
         }
 
         private void LoadPages()
         {
-            var reference = _factory.EnsureUmbracoContext();
-            _contentCache = reference.UmbracoContext.Content;
-            _mediaCache = reference.UmbracoContext.Media;
-            _sitemapPages.Clear();
-            if (_config.DocumentTypes is not null && _config.DocumentTypes.Any()) {
-                foreach (var docType in _config.DocumentTypes)
+            var reference = factory.EnsureUmbracoContext();
+            contentCache = reference.UmbracoContext.Content;
+            mediaCache = reference.UmbracoContext.Media;
+            sitemapPages.Clear();
+            foreach (var local in localization.GetAllLanguages())
+            {
+                if (local.IsDefault)
+                    defaultLocal = local;
+                else
+                    languages.Add(local);
+            }
+            if (defaultLocal is not null)
+            {
+                var roots = contentCache.GetAtRoot(defaultLocal.IsoCode);
+                foreach (var root in roots)
                 {
-                    foreach (var alias in docType.Aliases)
+                    foreach (var docType in config.DocumentTypes)
                     {
-                        var documentType = _contentCache.GetContentType(alias);
-                        if (documentType is not null)
+                        foreach (var alias in docType.Aliases)
                         {
-                            var pages = _contentCache.GetByContentType(documentType);
-                            if (!_config.ExcludeBoolFieldAlias.IsNullOrWhiteSpace())
+                            var pages = root.DescendantsOrSelfOfType(alias, defaultLocal.IsoCode);
+                            if (!config.ExcludeBoolFieldAlias.IsNullOrWhiteSpace())
                             {
-                                pages = pages.Where(x => !x.Value<bool>(_config.ExcludeBoolFieldAlias));
+                                pages = pages.Where(x => !x.Value<bool>(config.ExcludeBoolFieldAlias));
                             }
-                            _sitemapPages.AddRange(pages.Select(x => LoadPage(x, docType)));
+                            sitemapPages.AddRange(pages.Select(x => LoadPage(x, docType)));
                         }
                     }
                 }
@@ -79,25 +93,24 @@ namespace Blend.Sitemap
         private SitemapPage LoadPage(IPublishedContent content, SitemapDocumentTypeOptions type)
         {
             var page = GetPage(content, type);
-            if (_config.IncludePageImages || _config.IncludePageDocuments)
+            if (config.IncludePageImages || config.IncludePageDocuments)
             {
                 var media = GetMediaRelations(content.Id);
                 foreach (var item in media)
                 {
                     if (item.HasProperty("umbracoExtension") && item.HasValue("umbracoExtension"))
                     {
-                        if (_config.IncludePageImages && _imageAliases.Contains(item.ContentType.Alias))
+                        if (config.IncludePageImages && _imageAliases.Contains(item.ContentType.Alias))
                         {
-                            page.ImageUrls.Add(item.Url(mode: UrlMode.Absolute));
+                            page.ImageUrls.Add(item.Url(defaultLocal.IsoCode, UrlMode.Absolute));
                         }
-                        else if (_config.IncludePageDocuments)
+                        else if (config.IncludePageDocuments)
                         {
-                            _sitemapPages.Add(GetPage(item, type));
+                            sitemapPages.Add(GetPage(item, type));
                         }
                     }
                 }
             }
-            
             return page;
         }
 
@@ -110,31 +123,37 @@ namespace Blend.Sitemap
             }
             var page = new SitemapPage()
             {
-                Url = content.Url(mode: UrlMode.Absolute),
+                Url = content.Url(defaultLocal.IsoCode, UrlMode.Absolute),
                 UpdateDate = string.Format("{0:s}+00:00", content.UpdateDate),
                 ChangeFrequency = type.ChangeFrequency,
                 Priority = priority
             };
+            if (languages.Any())
+            {
+                page.Alternates.Add(new Alternate(defaultLocal.CultureInfo.TwoLetterISOLanguageName, content.Url(defaultLocal.IsoCode, UrlMode.Absolute)));
+                foreach (var item in languages)
+                {
+                    page.Alternates.Add(new Alternate(item.CultureInfo.TwoLetterISOLanguageName, content.Url(item.IsoCode, UrlMode.Absolute)));
+                }
+            }
             return page;
         }
 
         private List<IPublishedContent> GetMediaRelations(int pageId)
         {
             var mediaList = new List<IPublishedContent>();
-
-            var relations = _relationService.GetByParentId(pageId, MediaRelationAlias);
+            var relations = relationService.GetByParentId(pageId, MediaRelationAlias);
             if (relations.Any())
             {
                 foreach (var relation in relations)
                 {
-                    var media = _mediaCache.GetById(relation.ChildId);
+                    var media = mediaCache.GetById(relation.ChildId);
                     if (media is not null)
                     {
                         mediaList.Add(media);
                     }
                 }
             }
-
             return mediaList;
         }
     }

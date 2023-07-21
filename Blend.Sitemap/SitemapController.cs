@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using Umbraco.Cms.Web.Common.Controllers;
 
 namespace Blend.Sitemap
 {
