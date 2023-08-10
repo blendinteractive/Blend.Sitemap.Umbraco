@@ -5,6 +5,7 @@ using System.Linq;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
@@ -81,7 +82,11 @@ namespace Blend.Sitemap
                             var pages = root.DescendantsOrSelfOfType(alias, defaultLocal.IsoCode);
                             if (!config.ExcludeBoolFieldAlias.IsNullOrWhiteSpace())
                             {
-                                pages = pages.Where(x => !x.Value<bool>(config.ExcludeBoolFieldAlias));
+                                pages = pages.Where(x => 
+                                    x.HasProperty(config.ExcludeBoolFieldAlias) && 
+                                    x.HasValue(config.ExcludeBoolFieldAlias, defaultLocal.IsoCode) && 
+                                    !x.Value<bool>(config.ExcludeBoolFieldAlias, defaultLocal.IsoCode)
+                                );
                             }
                             sitemapPages.AddRange(pages.Select(x => LoadPage(x, docType)));
                         }
@@ -133,7 +138,10 @@ namespace Blend.Sitemap
                 page.Alternates.Add(new Alternate(defaultLocal.CultureInfo.TwoLetterISOLanguageName, content.Url(defaultLocal.IsoCode, UrlMode.Absolute)));
                 foreach (var item in languages)
                 {
-                    page.Alternates.Add(new Alternate(item.CultureInfo.TwoLetterISOLanguageName, content.Url(item.IsoCode, UrlMode.Absolute)));
+                    if (!config.ExcludeBoolFieldAlias.IsNullOrWhiteSpace() && !content.Value<bool>(config.ExcludeBoolFieldAlias, item.IsoCode))
+                    {
+                        page.Alternates.Add(new Alternate(item.CultureInfo.TwoLetterISOLanguageName, content.Url(item.IsoCode, UrlMode.Absolute)));
+                    }
                 }
             }
             return page;
