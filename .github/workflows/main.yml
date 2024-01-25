@@ -16,7 +16,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix: 
-        dotnet-versions: ['7.0']
+        dotnet-versions: ['8.0']
 
     name: Update_NuGet
     steps:
