@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,6 +26,6 @@
   </Target>
 
   <Target Name="BuildSchema" AfterTargets="PostBuildEvent">
-    <Exec Command=".\bin\Release\net7.0\SchemaGenerator.exe" />
+    <Exec Command=".\bin\Release\net8.0\SchemaGenerator.exe" />
   </Target>
 </Project>
