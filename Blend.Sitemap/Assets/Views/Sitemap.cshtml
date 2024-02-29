@@ -7,7 +7,7 @@
     Context.Response.ContentType = "application/xml";
 }
 <?xml version="1.0" encoding="utf-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" @(Model.IncludePageImages ? Html.Raw("xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\"") : "")>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="https://www.w3.org/1999/xhtml" @(Model.IncludePageImages ? Html.Raw("xmlns:image=\"https://www.google.com/schemas/sitemap-image/1.1\"") : "")>
     @if (Model.Pages.Any())
     {
         foreach(var item in Model.Pages)
