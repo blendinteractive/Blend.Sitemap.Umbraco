@@ -2,8 +2,8 @@ name: Update NuGet
 
 on:
   push:
-    branches:
-      - "main"
+    tags:
+      - "*.*.*"
 
 jobs:
   build:
