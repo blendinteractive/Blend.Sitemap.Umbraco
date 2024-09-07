@@ -82,10 +82,13 @@ namespace Blend.Sitemap
                             var pages = root.DescendantsOrSelfOfType(alias, defaultLocal.IsoCode);
                             if (!config.ExcludeBoolFieldAlias.IsNullOrWhiteSpace())
                             {
-                                pages = pages.Where(x => 
-                                    x.HasProperty(config.ExcludeBoolFieldAlias) && 
-                                    x.HasValue(config.ExcludeBoolFieldAlias, defaultLocal.IsoCode) && 
-                                    !x.Value<bool>(config.ExcludeBoolFieldAlias, defaultLocal.IsoCode)
+                                pages = pages.Where(x => !x.HasProperty(config.ExcludeBoolFieldAlias) ||
+                                    x.HasValue(config.ExcludeBoolFieldAlias, defaultLocal.IsoCode) ||
+                                    (
+                                        x.HasProperty(config.ExcludeBoolFieldAlias) &&
+                                        x.HasValue(config.ExcludeBoolFieldAlias, defaultLocal.IsoCode) &&
+                                        !x.Value<bool>(config.ExcludeBoolFieldAlias, defaultLocal.IsoCode)
+                                    )
                                 );
                             }
                             sitemapPages.AddRange(pages.Select(x => LoadPage(x, docType)));
