@@ -48,7 +48,7 @@ namespace Blend.Sitemap
             runtimeCache = appCaches.RuntimeCache;
             sitemapPages = new List<SitemapPage>();
             languages = new List<ILanguage>();
-            cacheDuration = TimeSpan.FromSeconds(5);
+            cacheDuration = TimeSpan.FromMinutes(config.CacheMinutes > 0 ? config.CacheMinutes : 15);
             _domainService = domainService;
             _httpContextAccessor = httpContextAccessor;
         }
