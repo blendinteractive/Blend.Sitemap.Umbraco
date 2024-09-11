@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Cms.Core.Cache;
@@ -18,10 +19,22 @@ namespace Blend.Sitemap
         INotificationHandler<ContentDeletedNotification>,
         INotificationHandler<ContentRolledBackNotification>
     {
-        private const string CacheKey = "sitemap";
         private readonly SitemapOptions _config;
         private readonly IAppPolicyCache _runtimeCache;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private List<string> _documentTypeAliases;
+
+        private string GetCacheKey()
+        {
+            if (_httpContextAccessor is not null)
+            {
+                var request = _httpContextAccessor.HttpContext?.Request;
+                if (request is not null)
+                    return $"sitemap-{request.Scheme}://{request.Host}{request.PathBase}{request.Path}";
+            }
+
+            return "sitemap";
+        }
 
         public SitemapCacheClear(IOptions<SitemapOptions> config, AppCaches appCaches)
         {
@@ -41,7 +54,7 @@ namespace Blend.Sitemap
         {
             if (pages.Any(x => _documentTypeAliases.Contains(x.ContentType.Alias)))
             {
-                _runtimeCache.ClearByKey(CacheKey);
+                _runtimeCache.ClearByKey(GetCacheKey());
             }
         }
 
@@ -49,7 +62,7 @@ namespace Blend.Sitemap
         {
             if (_documentTypeAliases.Contains(page.ContentType.Alias))
             {
-                _runtimeCache.ClearByKey(CacheKey);
+                _runtimeCache.ClearByKey(GetCacheKey());
             }
         }
 
@@ -57,7 +70,7 @@ namespace Blend.Sitemap
         {
             if (pages.Any(x => _documentTypeAliases.Contains(x.Entity.ContentType.Alias)))
             {
-                _runtimeCache.ClearByKey(CacheKey);
+                _runtimeCache.ClearByKey(GetCacheKey());
             }
         }
 

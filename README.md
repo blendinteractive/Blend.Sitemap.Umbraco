@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![NuGet version (Our.Umbraco.Blend.Sitemap)](https://img.shields.io/nuget/v/Our.Umbraco.Blend.Sitemap.svg?style=flat-square)](https://www.nuget.org/packages/Our.Umbraco.Blend.Sitemap/)
 
-This is a lightweight package that enables /sitemap.xml at the root of an umbraco website. This package is configured using appSettings.
+This is a lightweight package that enables /sitemap.xml at the root of an Umbraco website, supporting multisite environments and culture-specific URLs. This package is configured using appSettings.
 
 ## Install in Umbraco CMS
 ---
