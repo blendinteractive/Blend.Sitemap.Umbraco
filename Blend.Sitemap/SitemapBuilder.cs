@@ -148,7 +148,7 @@ namespace Blend.Sitemap
 
             var page = new SitemapPage()
             {
-                Url = content.Url(languageIsoCode, UrlMode.Absolute),
+                Url = content.Url(defaultLocal.IsoCode, UrlMode.Absolute),
                 UpdateDate = string.Format("{0:s}+00:00", content.UpdateDate),
                 ChangeFrequency = type.ChangeFrequency,
                 Priority = priority
@@ -156,7 +156,7 @@ namespace Blend.Sitemap
 
             foreach (var culture in content.Cultures)
             {
-                if (!culture.Key.Equals(languageIsoCode, StringComparison.CurrentCultureIgnoreCase))
+                if (!culture.Key.Equals(defaultLocal.IsoCode, StringComparison.CurrentCultureIgnoreCase))
                     page.Alternates.Add(new Alternate(culture.Key, content.Url(culture.Key, UrlMode.Absolute)));
             }
 
