@@ -1,11 +1,12 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using StackExchange.Profiling.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
@@ -15,7 +16,7 @@ namespace Blend.Sitemap
 {
     public interface ISitemapBuilder
     {
-        public SitemapViewModel GetSitemap();
+        public SitemapViewModel GetSitemap(string sitepath);
     }
 
     public class SitemapBuilder : ISitemapBuilder
@@ -26,6 +27,8 @@ namespace Blend.Sitemap
         private readonly ILocalizationService localization;
         private readonly IAppPolicyCache runtimeCache;
         private readonly TimeSpan cacheDuration;
+        private readonly IDomainService _domainService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private IPublishedContentCache contentCache;
         private IPublishedMediaCache mediaCache;
@@ -36,7 +39,7 @@ namespace Blend.Sitemap
         private readonly string[] _imageAliases = { "Image", "umbracoMediaVectorGraphics" };
         private const string MediaRelationAlias = "umbMedia";
 
-        public SitemapBuilder(IOptions<SitemapOptions> options, IUmbracoContextFactory factory, IRelationService relationService, ILocalizationService localization, AppCaches appCaches)
+        public SitemapBuilder(IOptions<SitemapOptions> options, IUmbracoContextFactory factory, IRelationService relationService, ILocalizationService localization, AppCaches appCaches, IDomainService domainService, IHttpContextAccessor httpContextAccessor)
         {
             config = options.Value;
             this.factory = factory;
@@ -46,58 +49,80 @@ namespace Blend.Sitemap
             sitemapPages = new List<SitemapPage>();
             languages = new List<ILanguage>();
             cacheDuration = TimeSpan.FromMinutes(config.CacheMinutes > 0 ? config.CacheMinutes : 15);
+            _domainService = domainService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public SitemapViewModel GetSitemap()
+        public SitemapViewModel GetSitemap(string path)
         {
-            return runtimeCache.GetCacheItem("sitemap", () =>
+            foreach (var local in localization.GetAllLanguages())
             {
-                LoadPages();
+                if (local.IsDefault)
+                    defaultLocal = local;
+                languages.Add(local);
+            }
+
+            var request = _httpContextAccessor.HttpContext?.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}{request.Path}";
+            var cacheKey = path.HasValue() ? $"sitemap-{baseUrl}" : "sitemap";
+
+            var allDomains = _domainService.GetAll(false);
+            var currentDomain = allDomains
+                .FirstOrDefault(domain => baseUrl.StartsWith(domain.DomainName, StringComparison.OrdinalIgnoreCase));
+
+            return runtimeCache.GetCacheItem(cacheKey, () =>
+            {
+                LoadPages(currentDomain);
                 return new SitemapViewModel(sitemapPages, config.IncludePageImages);
             }, cacheDuration);
         }
 
-        private void LoadPages()
+        private void LoadPages(IDomain domain)
         {
             var reference = factory.EnsureUmbracoContext();
             contentCache = reference.UmbracoContext.Content;
             mediaCache = reference.UmbracoContext.Media;
             sitemapPages.Clear();
-            foreach (var local in localization.GetAllLanguages())
+
+            if (domain is not null)
             {
-                if (local.IsDefault)
-                    defaultLocal = local;
-                else
-                    languages.Add(local);
+                var rootNode = contentCache.GetById(domain.RootContentId.Value);
+                if (rootNode is not null)
+                    GetPages(rootNode, domain.LanguageIsoCode);
             }
-            if (defaultLocal is not null)
+            else
             {
                 var roots = contentCache.GetAtRoot(defaultLocal.IsoCode);
                 foreach (var root in roots)
                 {
-                    foreach (var docType in config.DocumentTypes)
-                    {
-                        foreach (var alias in docType.Aliases)
-                        {
-                            var pages = root.DescendantsOrSelfOfType(alias, defaultLocal.IsoCode);
-                            if (!config.ExcludeBoolFieldAlias.IsNullOrWhiteSpace())
-                            {
-                                pages = pages.Where(x => 
-                                    x.HasProperty(config.ExcludeBoolFieldAlias) && 
-                                    x.HasValue(config.ExcludeBoolFieldAlias, defaultLocal.IsoCode) && 
-                                    !x.Value<bool>(config.ExcludeBoolFieldAlias, defaultLocal.IsoCode)
-                                );
-                            }
-                            sitemapPages.AddRange(pages.Select(x => LoadPage(x, docType)));
-                        }
-                    }
+                    GetPages(root, defaultLocal.IsoCode);
                 }
             }
         }
 
-        private SitemapPage LoadPage(IPublishedContent content, SitemapDocumentTypeOptions type)
+        private void GetPages(IPublishedContent root, string isoLanguageCode)
         {
-            var page = GetPage(content, type);
+            foreach (var docType in config.DocumentTypes)
+            {
+                foreach (var alias in docType.Aliases)
+                {
+                    var pages = root.DescendantsOrSelfOfType(alias, isoLanguageCode);
+                    if (!config.ExcludeBoolFieldAlias.HasValue())
+                    {
+                        pages = pages.Where(x =>
+                            x.HasProperty(config.ExcludeBoolFieldAlias) &&
+                            x.HasValue(config.ExcludeBoolFieldAlias, isoLanguageCode) &&
+                            !x.Value<bool>(config.ExcludeBoolFieldAlias, isoLanguageCode)
+                        );
+                    }
+                    sitemapPages.AddRange(pages.Select(x => LoadPage(x, docType, isoLanguageCode)));
+                }
+            }
+        }
+
+        private SitemapPage LoadPage(IPublishedContent content, SitemapDocumentTypeOptions type, string languageIsoCode)
+        {
+            var page = GetPage(content, type, languageIsoCode);
             if (config.IncludePageImages || config.IncludePageDocuments)
             {
                 var media = GetMediaRelations(content.Id);
@@ -106,26 +131,21 @@ namespace Blend.Sitemap
                     if (item.HasProperty("umbracoExtension") && item.HasValue("umbracoExtension"))
                     {
                         if (config.IncludePageImages && _imageAliases.Contains(item.ContentType.Alias))
-                        {
-                            page.ImageUrls.Add(item.Url(defaultLocal.IsoCode, UrlMode.Absolute));
-                        }
+                            page.ImageUrls.Add(item.Url(languageIsoCode, UrlMode.Absolute));
                         else if (config.IncludePageDocuments)
-                        {
-                            sitemapPages.Add(GetPage(item, type));
-                        }
+                            sitemapPages.Add(GetPage(item, type, languageIsoCode));
                     }
                 }
             }
             return page;
         }
 
-        private SitemapPage GetPage(IPublishedContent content, SitemapDocumentTypeOptions type)
+        private SitemapPage GetPage(IPublishedContent content, SitemapDocumentTypeOptions type, string languageIsoCode)
         {
             var priority = "1.0";
             if (type.Priority < 10)
-            {
                 priority = $"0.{type.Priority}";
-            }
+
             var page = new SitemapPage()
             {
                 Url = content.Url(defaultLocal.IsoCode, UrlMode.Absolute),
@@ -133,17 +153,13 @@ namespace Blend.Sitemap
                 ChangeFrequency = type.ChangeFrequency,
                 Priority = priority
             };
-            if (languages.Any())
+
+            foreach (var culture in content.Cultures)
             {
-                page.Alternates.Add(new Alternate(defaultLocal.CultureInfo.TwoLetterISOLanguageName, content.Url(defaultLocal.IsoCode, UrlMode.Absolute)));
-                foreach (var item in languages)
-                {
-                    if (!config.ExcludeBoolFieldAlias.IsNullOrWhiteSpace() && !content.Value<bool>(config.ExcludeBoolFieldAlias, item.IsoCode))
-                    {
-                        page.Alternates.Add(new Alternate(item.CultureInfo.TwoLetterISOLanguageName, content.Url(item.IsoCode, UrlMode.Absolute)));
-                    }
-                }
+                if (!culture.Key.Equals(defaultLocal.IsoCode, StringComparison.CurrentCultureIgnoreCase))
+                    page.Alternates.Add(new Alternate(culture.Key, content.Url(culture.Key, UrlMode.Absolute)));
             }
+
             return page;
         }
 
@@ -157,9 +173,7 @@ namespace Blend.Sitemap
                 {
                     var media = mediaCache.GetById(relation.ChildId);
                     if (media is not null)
-                    {
                         mediaList.Add(media);
-                    }
                 }
             }
             return mediaList;
