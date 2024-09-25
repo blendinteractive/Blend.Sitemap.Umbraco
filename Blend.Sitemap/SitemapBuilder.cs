@@ -142,8 +142,8 @@ namespace Blend.Sitemap
 
         private SitemapPage GetPage(IPublishedContent content, SitemapDocumentTypeOptions type, string languageIsoCode)
         {
-            var priority = "1.0";
-            if (type.Priority < 10)
+            var priority = "";
+            if (type.Priority != 0 && type.Priority < 10)
                 priority = $"0.{type.Priority}";
 
             var page = new SitemapPage()
