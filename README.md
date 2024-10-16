@@ -44,19 +44,19 @@ In the root of your `appSettings.json` you can configure custom settings. You ca
     "DocumentTypes": [
         {
             "Aliases": [ "homePage" ],
-            "ChangeFrequency": "daily"
+            "ChangeFrequency": "daily",
             "Priority": 10
         },
         {
             "Aliases": [ "newsList", "eventsList", "landingPage" ],
-            "ChangeFrequency": "weekly"
+            "ChangeFrequency": "weekly",
             "Priority": 9
         },
         {
             "Aliases": [ "standardPage", "news", "event" ],
-            "ChangeFrequency": "monthly"
+            "ChangeFrequency": "monthly",
             "Priority": 5
-        },
+        }
     ]
 }
 ```
