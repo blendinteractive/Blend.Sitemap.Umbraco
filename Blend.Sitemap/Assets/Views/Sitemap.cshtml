@@ -29,8 +29,14 @@
             }
         }
         <lastmod>@item.UpdateDate</lastmod>
-        <changefreq>@item.ChangeFrequency</changefreq>
-        <priority>@item.Priority</priority>
+        @if (item.ChangeFrequency is not ChangeFrequency.omit)
+        {
+            <changefreq>@item.ChangeFrequency</changefreq>
+        }
+        @if (item.Priority is not null && item.Priority.Any())
+        {
+            <priority>@item.Priority</priority>
+        }
         @if (Model.IncludePageImages)
         {
             DisplayRelatedImages(item.ImageUrls);

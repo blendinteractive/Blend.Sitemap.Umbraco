@@ -61,14 +61,12 @@ namespace Blend.Sitemap
         /// <summary>
         /// How often the does the content in these document types change
         /// </summary>
-        [DefaultValue(ChangeFrequency.monthly)]
         [Description("How often the does the content in these document types change")]
         public ChangeFrequency ChangeFrequency { get; set; }
 
         /// <summary>
         /// What is the priority of these document types
         /// </summary>
-        [DefaultValue(5)]
         [Description("What is the priority of these document types")]
         public int Priority { get; set; }
     }
@@ -79,6 +77,7 @@ namespace Blend.Sitemap
     [Description("Options for Change Frequency")]
     public enum ChangeFrequency
     {
+        omit,
         always,
         hourly,
         daily,
