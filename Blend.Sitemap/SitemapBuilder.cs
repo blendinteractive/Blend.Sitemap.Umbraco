@@ -107,7 +107,7 @@ namespace Blend.Sitemap
                 foreach (var alias in docType.Aliases)
                 {
                     var pages = root.DescendantsOrSelfOfType(alias, isoLanguageCode);
-                    if (!config.ExcludeBoolFieldAlias.HasValue())
+                    if (config.ExcludeBoolFieldAlias.HasValue())
                     {
                         pages = pages.Where(x =>
                             x.HasProperty(config.ExcludeBoolFieldAlias) &&
