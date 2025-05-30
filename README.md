@@ -77,4 +77,4 @@ In the root of your `appSettings.json` you can configure custom settings. You ca
 
 `Sitemap.DocumentType.ChangeFrequency` is an optional string. Options for this are `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, and `never`. If not filled in these document types will not have the property.
 
-`Sitemap.DocumentType.Priority` is an optional string. Options for this are `0.1` thorugh `0.9` and `1.0`. If not filled in these document types will not have the property.
+`Sitemap.DocumentType.Priority` is an optional integer. Options for this are `1` thorugh `10`. If not filled in these document types will not have the property.
