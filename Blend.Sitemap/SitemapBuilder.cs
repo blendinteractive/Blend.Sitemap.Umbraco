@@ -16,7 +16,7 @@ namespace Blend.Sitemap
 {
     public interface ISitemapBuilder
     {
-        public SitemapViewModel GetSitemap(string sitepath);
+        public SitemapViewModel GetSitemap();
     }
 
     public class SitemapBuilder : ISitemapBuilder
@@ -53,7 +53,7 @@ namespace Blend.Sitemap
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public SitemapViewModel GetSitemap(string path)
+        public SitemapViewModel GetSitemap()
         {
             foreach (var local in localization.GetAllLanguages())
             {
@@ -63,12 +63,12 @@ namespace Blend.Sitemap
             }
 
             var request = _httpContextAccessor.HttpContext?.Request;
-            var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}{request.Path}";
-            var cacheKey = path.HasValue() ? $"sitemap-{baseUrl}" : "sitemap";
+            var baseUrl = $"{request.Host}{request.PathBase}";
 
             var allDomains = _domainService.GetAll(false);
             var currentDomain = allDomains
-                .FirstOrDefault(domain => baseUrl.StartsWith(domain.DomainName, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(x => x.DomainName.Contains(baseUrl, StringComparison.OrdinalIgnoreCase));
+            var cacheKey = $"sitemap-{currentDomain.DomainName}";
 
             return runtimeCache.GetCacheItem(cacheKey, () =>
             {
@@ -94,9 +94,7 @@ namespace Blend.Sitemap
             {
                 var roots = contentCache.GetAtRoot(defaultLocal.IsoCode);
                 foreach (var root in roots)
-                {
                     GetPages(root, defaultLocal.IsoCode);
-                }
             }
         }
 
@@ -107,7 +105,7 @@ namespace Blend.Sitemap
                 foreach (var alias in docType.Aliases)
                 {
                     var pages = root.DescendantsOrSelfOfType(alias, isoLanguageCode);
-                    if (!config.ExcludeBoolFieldAlias.HasValue())
+                    if (config.ExcludeBoolFieldAlias.HasValue())
                     {
                         pages = pages.Where(x =>
                             x.HasProperty(config.ExcludeBoolFieldAlias) &&
@@ -145,6 +143,8 @@ namespace Blend.Sitemap
             var priority = "";
             if (type.Priority != 0 && type.Priority < 10)
                 priority = $"0.{type.Priority}";
+            else if (type.Priority >= 10)
+                priority = "1.0";
 
             var page = new SitemapPage()
             {
@@ -154,11 +154,10 @@ namespace Blend.Sitemap
                 Priority = priority
             };
 
-            foreach (var culture in content.Cultures)
-            {
-                if (!culture.Key.Equals(defaultLocal.IsoCode, StringComparison.CurrentCultureIgnoreCase))
-                    page.Alternates.Add(new Alternate(culture.Key, content.Url(culture.Key, UrlMode.Absolute)));
-            }
+            if (languages.Any() && languages.Count > 1)
+                foreach (var culture in content.Cultures)
+                    if (!culture.Key.Equals(defaultLocal.IsoCode, StringComparison.CurrentCultureIgnoreCase))
+                        page.Alternates.Add(new Alternate(culture.Key, content.Url(culture.Key, UrlMode.Absolute)));
 
             return page;
         }

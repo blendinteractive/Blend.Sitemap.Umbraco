@@ -10,14 +10,11 @@ namespace Blend.Sitemap
         {
             _sitemapBuilder = sitemapBuilder;
         }
-        [Route("{path?}/sitemap.xml")]
-        [Route("sitemap.xml")]
-        public IActionResult Sitemap(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                path = string.Empty;
 
-            var model = _sitemapBuilder.GetSitemap(path);
+        [Route("sitemap.xml")]
+        public IActionResult Sitemap()
+        {
+            var model = _sitemapBuilder.GetSitemap();
 
             return View(model);
         }
