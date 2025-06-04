@@ -65,10 +65,12 @@ namespace Blend.Sitemap
             var request = _httpContextAccessor.HttpContext?.Request;
             var baseUrl = $"{request.Host}{request.PathBase}";
 
+            var cacheKey = "sitemap";
             var allDomains = _domainService.GetAll(false);
             var currentDomain = allDomains
                 .FirstOrDefault(x => x.DomainName.Contains(baseUrl, StringComparison.OrdinalIgnoreCase));
-            var cacheKey = $"sitemap-{currentDomain.DomainName}";
+            if (currentDomain is not null)
+                cacheKey = $"sitemap-{currentDomain.DomainName}";
 
             return runtimeCache.GetCacheItem(cacheKey, () =>
             {
