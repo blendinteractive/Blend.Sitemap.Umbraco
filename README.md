@@ -20,7 +20,7 @@ Install-Package Our.Umbraco.Blend.Sitemap
 
 ## Breaking / Functionality Change
 ---
-In version `13.1.0` document types that do not have the excluded alias will be included in the sitemap.
+In version `13.1.0+` document types that do not have the excluded alias will be included in the sitemap.
 
 
 ## Setup
