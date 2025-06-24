@@ -110,9 +110,11 @@ namespace Blend.Sitemap
                     if (config.ExcludeBoolFieldAlias.HasValue())
                     {
                         pages = pages.Where(x =>
-                            x.HasProperty(config.ExcludeBoolFieldAlias) &&
-                            x.HasValue(config.ExcludeBoolFieldAlias, isoLanguageCode) &&
-                            !x.Value<bool>(config.ExcludeBoolFieldAlias, isoLanguageCode)
+                            !(
+                                x.HasProperty(config.ExcludeBoolFieldAlias) &&
+                                x.HasValue(config.ExcludeBoolFieldAlias, isoLanguageCode) &&
+                                x.Value<bool>(config.ExcludeBoolFieldAlias, isoLanguageCode)
+                            )
                         );
                     }
                     sitemapPages.AddRange(pages.Select(x => LoadPage(x, docType, isoLanguageCode)));

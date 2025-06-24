@@ -18,6 +18,11 @@ Or Nuget
 Install-Package Our.Umbraco.Blend.Sitemap
 ```
 
+## Breaking / Functionality Change
+---
+In version `13.1.0` document types that do not have the excluded alias will be included in the sitemap.
+
+
 ## Setup
 ---
 In the `Startup.cs` there is a configuration you need to add for `/sitemap.xml` path to render.
